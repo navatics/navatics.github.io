@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>使用cmake编写跨平台应用 | Navatics Technical Team</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="0x00 为什么要使用CMakeCMake是一种构建工具，什么是构建工具？就是负责将程序源码以及各种必须的资源编译以及打包成一个可被执行的程序的工具集。说人话？那就是cmake是一种编译工具，用来把代码变成二进制可执行程序，但是它又不仅仅是简单的编译程序，还带有一点额外的代码管理功能。我们或多或少已经听说过其他的构建工具，比如GNU Make（就是大家平时说的make），autotools，微软">
+<meta name="keywords" content="navatics, mito, technical">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用cmake编写跨平台应用">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;12&#x2F;01&#x2F;use-cmake-to-build-cross-platform-program&#x2F;index.html">
+<meta property="og:site_name" content="Navatics Technical Team">
+<meta property="og:description" content="0x00 为什么要使用CMakeCMake是一种构建工具，什么是构建工具？就是负责将程序源码以及各种必须的资源编译以及打包成一个可被执行的程序的工具集。说人话？那就是cmake是一种编译工具，用来把代码变成二进制可执行程序，但是它又不仅仅是简单的编译程序，还带有一点额外的代码管理功能。我们或多或少已经听说过其他的构建工具，比如GNU Make（就是大家平时说的make），autotools，微软">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;winson08Li&#x2F;picdb&#x2F;master&#x2F;img&#x2F;blog&#x2F;20191201195029.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;winson08Li&#x2F;picdb&#x2F;master&#x2F;img&#x2F;blog&#x2F;20191201195728.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;winson08Li&#x2F;picdb&#x2F;master&#x2F;img&#x2F;blog&#x2F;20191201200106.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;winson08Li&#x2F;picdb&#x2F;master&#x2F;img&#x2F;blog&#x2F;20191201200229.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;winson08Li&#x2F;picdb&#x2F;master&#x2F;img&#x2F;blog&#x2F;20191201203233.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;winson08Li&#x2F;picdb&#x2F;master&#x2F;img&#x2F;blog&#x2F;20191201203302.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;winson08Li&#x2F;picdb&#x2F;master&#x2F;img&#x2F;blog&#x2F;20191201210802.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;winson08Li&#x2F;picdb&#x2F;master&#x2F;img&#x2F;blog&#x2F;20191201211527.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;winson08Li&#x2F;picdb&#x2F;master&#x2F;img&#x2F;blog&#x2F;20191201214554.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;winson08Li&#x2F;picdb&#x2F;master&#x2F;img&#x2F;blog&#x2F;20191201214629.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;winson08Li&#x2F;picdb&#x2F;master&#x2F;img&#x2F;blog&#x2F;20191201215024.png">
+<meta property="og:updated_time" content="2019-12-01T14:19:15.677Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;winson08Li&#x2F;picdb&#x2F;master&#x2F;img&#x2F;blog&#x2F;20191201195029.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Navatics Technical Team" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Navatics Technical Team</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-use-cmake-to-build-cross-platform-program" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/12/01/use-cmake-to-build-cross-platform-program/" class="article-date">
+  <time datetime="2019-12-01T14:05:06.000Z" itemprop="datePublished">2019-12-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      使用cmake编写跨平台应用
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <hr>
+<h2 id="0x00-为什么要使用CMake"><a href="#0x00-为什么要使用CMake" class="headerlink" title="0x00 为什么要使用CMake"></a>0x00 为什么要使用CMake</h2><p>CMake是一种构建工具，什么是构建工具？就是负责将程序源码以及各种必须的资源编译以及打包成一个可被执行的程序的工具集。说人话？那就是cmake是一种编译工具，用来把代码变成二进制可执行程序，但是它又不仅仅是简单的编译程序，还带有一点额外的代码管理功能。我们或多或少已经听说过其他的构建工具，比如GNU Make（就是大家平时说的make），autotools，微软的nmake，QT的qmake，用于Java的gradle等都算。其目的在于简化我们的工作，减少编译工具的维护量，把精力集中到核心问题上来，从而提高我们的工作效率。<br>编译工具的每一次改进，都是为了效率。比如，之前在学校上C语言课的时候，老师肯定教过用gcc编译c程序，例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ gcc -o main main.c</span><br></pre></td></tr></table></figure>
+<p>这便是最简单的编译方式。而在linux上用得最多，最原始的便是makefile。问题在于GNU Make只能在windows上使用，当有时候我们需要开发一个小工具跑在Linux系统上，但是又想用visual studio便捷的调试功能辅助开发的时候，makefile就无能为力了。而自己去维护一个跨平台的makefile摸板，是一个工作量非常大而且非常容易出错的工作。尤其是多目标多依赖情况下的不同平台不同代码库需要指定不一样的编译参数的时候，简直就是灾难。当涉及到外部库引用的时候，需要自己写很多检测相关的脚本代码，而这些原本应该是构建工具应该可以完成的。正是由于原始的makefile带给了程序员过高的复杂性，cmake应运而生，尤其在跨平台以及库引用上，cmake内部提供了一系列的命令，使用起来非常简单，维护起来效率很高。</p>
+<blockquote>
+<p>Noto: autotools系列工具也可以完成类似的工作，但是visual studio对cmake的兼容性更好，最新版的vs2019甚至可以直接建立cmake工程。而且autotools的configure配置文件语法跟shell差不多，尤其是某些复杂命令以及符号的应用，上手难度比较高，容易让人一下看了就退缩。</p>
+</blockquote>
+<h2 id="0x01-从Hello-World开始"><a href="#0x01-从Hello-World开始" class="headerlink" title="0x01 从Hello World开始"></a>0x01 从Hello World开始</h2><p>那让我们撇开其他东西，先从最简单的helloworld开始。</p>
+<p>为了叙述方便，下面说的是linux系统的使用方法，后面我会提到如何为windows编译。</p>
+<p>项目结构：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">project</span><br><span class="line">|   CMakeLists.txt</span><br><span class="line">|</span><br><span class="line">└───src</span><br><span class="line">      main.c</span><br></pre></td></tr></table></figure>
+<p>main.c的内容：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span>** argv)</span></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"hello world!\n"</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>CMakeLists.txt的文件内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cmake_minimum_required (VERSION 3.5)</span><br><span class="line">project (helloworld)</span><br><span class="line">add_executable(helloworld src/main.c)</span><br></pre></td></tr></table></figure>
+
+<p>这个叫CMakeLists.txt的文件就是编译脚本，告诉cmake代码这个项目的编译规则。对于我们的helloworld来说，只有一件事情，那就是告诉cmake代码在哪里，然后把代码编译成可执行文件。</p>
+<p>在读cmake脚本的时候我们需要知道一个基础概念，那就是cmake脚本是由一条一条的命令组成的。比如上面这个脚本，我们可以看到<code>cmake_minimum_required</code>， <code>project</code>以及<code>add_executable</code>后面都有一个括号，是不是跟函数调用很像？其实就是一样的意思。这三个都是cmake的内置命令，括号里面是这个命令的参数。cmake会在你调用这些命令的时候执行一系列的操作，比如初始化一些全局变量的值，设置工程的一些属性等。</p>
+<p>第一行<code>cmake_minimum_required (VERSION 3.5)</code>是必须的，指明了你这个cmake脚本能够被执行的最低cmake版本。因为cmake不同版本间会有些差异，如果你不指明的话低版本的cmake是认不出高版本的cmake命令的，所以cmake直接规定了第一行必须写这个。版本可以根据自己安装或者需要的cmake来写，我安装的是3.5.1，所以我就写3.5了，如果你的是3.8，3.9，你可以写3.8或者3.9，写3.5也没问题，因为cmake是向下兼容的，通常情况下我们都会写低一点，因为其他系统一般不会安装最新版的cmake。<br>第二行也是必须的，指明了工程的名字，就像你在IDE里面新建一个工程必须要一个名字一样，我们的cmake脚本也需要指定一个工程名字。<br>第三行<code>add_executable</code>这个可以理解为编译命令，即使用第二个参数列出的所有源文件编译成名字为helloworld的可执行文件。编译目标一般有三种，可执行文件，动态库，静态库，这三种都对应不同的命令。</p>
+<p>好了，现在我们能看懂这个hellworld了，非常简单吧。怎么用呢？简单，就是让cmake去执行你的CMakeLists.txt就行了。怎么执行？</p>
+<p>先在项目目录建立一个build文件夹作为产生所有编译文件的地方</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mkdir build &amp;&amp; cd build</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>Note: cmake提倡目标代码与源码分开的做法，这样一份代码可以产生任意多份目标代码，如果是makefile的话，中间文件以及目标代码会跟源码混在一起，影响管理，同时无法并存多个目标代码。</p>
+</blockquote>
+<p>然后告诉cmake你的CMakeLists.txt在哪里，这样cmake就可以帮你生成真正的编译脚本：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ cmake ..</span><br></pre></td></tr></table></figure>
+<p>因为我们的CMakeLists.txt在build的上级目录，而我们现在在build目录，所以我们就打了两个点，告诉cmake我们的脚本在上一级文件夹。敲下回车，cmake就会在当前目录生成所有的编译文件，执行此命令你就能看到如下输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">-- The C compiler identification is GNU 5.4.0</span><br><span class="line">-- The CXX compiler identification is GNU 5.4.0</span><br><span class="line">-- Check for working C compiler: /usr/bin/cc</span><br><span class="line">-- Check for working C compiler: /usr/bin/cc -- works</span><br><span class="line">-- Detecting C compiler ABI info</span><br><span class="line">-- Detecting C compiler ABI info - done</span><br><span class="line">-- Detecting C compile features</span><br><span class="line">-- Detecting C compile features - done</span><br><span class="line">-- Check for working CXX compiler: /usr/bin/c++</span><br><span class="line">-- Check for working CXX compiler: /usr/bin/c++ -- works</span><br><span class="line">-- Detecting CXX compiler ABI info</span><br><span class="line">-- Detecting CXX compiler ABI info - done</span><br><span class="line">-- Detecting CXX compile features</span><br><span class="line">-- Detecting CXX compile features - done</span><br><span class="line">-- Configuring done</span><br><span class="line">-- Generating done</span><br><span class="line">-- Build files have been written to: /home/winson/projects/cmake_proj/helloworld/build</span><br></pre></td></tr></table></figure>
+<p>表示cmake已经帮你生成好了最终的makefile。然后你就可以执行make编译了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ make</span><br></pre></td></tr></table></figure>
+<p>然后你就会看到如下输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Scanning dependencies of target helloworld</span><br><span class="line">[ 50%] Building C object CMakeFiles/helloworld.dir/src/main.c.o</span><br><span class="line">[100%] Linking C executable helloworld</span><br><span class="line">[100%] Built target helloworld</span><br></pre></td></tr></table></figure>
+<p>执行一下<code>./helloworld</code>:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">winson@ubuntu-server:~/projects/cmake_proj/helloworld/build$ ./helloworld </span><br><span class="line">hello world!</span><br><span class="line">winson@ubuntu-server:~/projects/cmake_proj/helloworld/build$</span><br></pre></td></tr></table></figure>
+<p>看到输出”hello world!”，程序正确执行。</p>
+<p>我们把这个程序除了build目录其他东西原封不动copy到windows的某个目录，然后新建一个build目录，点空白地方然后shift + 鼠标右键选择打开powershell，然后cd到build目录，执行<code>cmake ..</code>。<br>等命令执行完成后看看文件夹里面生成了什么？<br><img src="https://raw.githubusercontent.com/winson08Li/picdb/master/img/blog/20191201195029.png" alt="20191201195029.png"></p>
+<p>没错，一个visual studio解决方案！</p>
+<p>双击sln解决方案文件打开此工程。右键选择helloworld“设为启动工程”，然后ctrl + f5编译并执行这个工程：</p>
+<p><img src="https://raw.githubusercontent.com/winson08Li/picdb/master/img/blog/20191201195728.png" alt="20191201195728.png"></p>
+<p>我们甚至能在不打开vs的情况下完成编译。</p>
+<p>在build目录下shift + 鼠标右键选择打开powershell，然后直接利用cmake执行编译：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ cmake --build . --config Release</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>Note: –build指示cmake执行编译， 那个点的意思是当前目录，即在当前目录执行编译；–config是编译的配置，有debug有release，这里我们指定了release。<br><img src="https://raw.githubusercontent.com/winson08Li/picdb/master/img/blog/20191201200106.png" alt="20191201200106.png"></p>
+</blockquote>
+<p>这样，在build目录下面的Release目录成功生成了Release的helloworld文件，尝试执行一下:</p>
+<p><img src="https://raw.githubusercontent.com/winson08Li/picdb/master/img/blog/20191201200229.png" alt="20191201200229.png"></p>
+<p>没问题。</p>
+<p>于是，我们完成了一个跨平台的helloworld程序。</p>
+<h3 id="0x02-连接外部库"><a href="#0x02-连接外部库" class="headerlink" title="0x02 连接外部库"></a>0x02 连接外部库</h3><p>一个程序总不能所有轮子都自己写吧，总会需要其他轮子的吧，比如我们总会用到多线程相关的东西，于是我们就会使用到线程库。</p>
+<p>一般说来，我们在linux下都是使用的<code>pthread</code>这个线程库。</p>
+<p>好了，让我们把pthread代码加入到main.c里面，再去修改CMakeLists.txt文件。</p>
+<p>修改之后的代码如下所示：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stddef.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;pthread.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span>* <span class="title">thread_func</span><span class="params">(<span class="keyword">void</span>* usr)</span></span>&#123;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"from thread!\n"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span>** argv)</span></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"hello world!\n"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">pthread_t</span> id;</span><br><span class="line">    pthread_create(&amp;id, <span class="literal">NULL</span>, thread_func, <span class="literal">NULL</span>);</span><br><span class="line">    pthread_join(id, <span class="literal">NULL</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>够简单吧，只是开了个现成并在线程里打印了一行字。<br>然后我们来修改CMakeLists.txt。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">cmake_minimum_required (VERSION 3.5)</span><br><span class="line">project (helloworld)</span><br><span class="line"></span><br><span class="line">find_package(Threads)</span><br><span class="line"></span><br><span class="line">add_executable(helloworld src/main.c)</span><br><span class="line">target_link_libraries (helloworld $&#123;CMAKE_THREAD_LIBS_INIT&#125;)</span><br></pre></td></tr></table></figure>
+<p>一共多了两行，是什么意思呢？<br><code>find_package</code>如上所述，也是cmake提供的一个外部命令，用于查找某个<code>Module</code>模组，当调用这个命令完成之后，<code>find_package</code>会定义一系列的变量供我们使用，类似返回值一样，其中会有一个叫<code>xxx_FOUND</code>的变量，指示了是否找到线程库。<br>在我们这里，我们要找的模组就是<code>Threads</code>，也就是线程库。对于不同的系统cmake有不同线程库的支持，在没有其他外部参数的情况下，在Linux系统上面使用的就是pthread，而在Windows下使用的就是Win32 Thread。这个模组在执行完成后会定义一个变量，叫<code>CMAKE_THREAD_LIBS_INIT</code>，里面保存了线程库的连接参数。<br>于是上面多了的两行就很好解释了，<code>find_package(Threads)</code>告诉cmake去查找线程库，<code>target_link_libraries (helloworld ${CMAKE_THREAD_LIBS_INIT})</code>告诉cmake<code>helloworld</code>这个目标需要连接某个库的名称，这个库由<code>Threads</code>定义的<code>CMAKE_THREAD_LIBS_INIT</code>所指定。</p>
+<p>清理build下面的文件重新生成编译文件并执行编译:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">cd</span> build</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> rm -rf *</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> cmake ..</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> make</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://raw.githubusercontent.com/winson08Li/picdb/master/img/blog/20191201203233.png" alt="20191201203233.png"></p>
+<p>执行之：</p>
+<p><img src="https://raw.githubusercontent.com/winson08Li/picdb/master/img/blog/20191201203302.png" alt="20191201203302.png"></p>
+<p>没问题。</p>
+<blockquote>
+<p>Note: 这里可能出现了一些新东西，比如<code>${CMAKE_THREAD_LIBS_INIT}</code>这种用法。cmake里面需要用到某个变量的值，必须以<code>${xxx}</code>的形式来引用，否则cmake只会当作是普通的字符串。定义变量和对变量赋值都可以用<code>set</code>这个命令，如定义变量<code>set(var)</code>，给变量赋值<code>set(var FALSE)</code>, <code>set(var &quot;dfdfdfdf&quot;)</code>，cmake里面没有数据类型，变量可以随便赋值。</p>
+</blockquote>
+<p>好完了之后如果你直接拿这个程序去windows下面执行<code>cmake --build .</code>那肯定是出错的，因为windows没有pthread这个线程库。那咋办呢？</p>
+<p>两个办法：</p>
+<ol>
+<li>写一个平台无关的线程封装API，然后写两套不同的线程实现，不用改CMakeLists.txt。</li>
+<li>直接使用pthread-w32，一个可以在windows下跑的pthread实现。然后告诉cmake怎么找到这个库。不用改代码。</li>
+</ol>
+<p>我这里倾向第二种方式，因为改编译脚本只是改一次，如果实际项目里面要改代码，那可能会带入新的bug，尤其是这种属于重构的工作，更应该慎重。</p>
+<p>引用外部库，主要的工作其实就是两个，第一，设置外部库头文件的查找目录，第二，设置链接的外部库。</p>
+<p>cmake里面干这件事情的是<code>include_directories</code>与<code>target_link_libraries</code>这两个命令完成。</p>
+<blockquote>
+<p>Note: 其中也可以使用<code>link_libraries</code>代替<code>target_link_libraries</code>，区别是<code>link_libraries</code>指定的是全路径名，而<code>target_link_libraries</code>只是指定了库的名字，所以如果你的库不在系统默认查找路径下的话你需要使用<code>link_directories</code>指定你的库的查找路径。</p>
+</blockquote>
+<p>下载<code>pthreads-w32-2-9-1-release</code>过程略，解压之，复制里面的<code>Pre-built.2/include</code>文件夹到<code>helloworld</code>项目的根目录（即跟CMakeLists.txt同目录），然后新建<code>lib</code>目录，把<code>pthreads-w32-2-9-1-release\Pre-built.2\lib\x86</code>里面的<code>pthreadVC2.lib</code>复制到刚刚新建的<code>lib</code>目录，重命名成<code>pthread.lib</code>（不重命名也行，只是这样这样会看起来好看点）。</p>
+<p>然后改一下CMakeLists.txt:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">cmake_minimum_required (VERSION 3.5)</span><br><span class="line">project (helloworld)</span><br><span class="line"></span><br><span class="line">include_directories($&#123;CMAKE_SOURCE_DIR&#125;/include)</span><br><span class="line">link_directories($&#123;CMAKE_SOURCE_DIR&#125;/lib)</span><br><span class="line"></span><br><span class="line">add_executable(helloworld src/main.c)</span><br><span class="line">target_link_libraries (helloworld pthread)</span><br></pre></td></tr></table></figure>
+
+<p>编译的时候发现某个符号重定义，google一下解决，最终CMakeLists.txt文件如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">cmake_minimum_required (VERSION 3.5)</span><br><span class="line">project (helloworld)</span><br><span class="line"></span><br><span class="line">if (WIN32)</span><br><span class="line">    add_definitions(-DHAVE_STRUCT_TIMESPEC)</span><br><span class="line">endif()</span><br><span class="line"></span><br><span class="line">include_directories($&#123;CMAKE_SOURCE_DIR&#125;/include)</span><br><span class="line">link_directories($&#123;CMAKE_SOURCE_DIR&#125;/lib)</span><br><span class="line"></span><br><span class="line">add_executable(helloworld src/main.c)</span><br><span class="line">target_link_libraries (helloworld pthread)</span><br></pre></td></tr></table></figure>
+
+<p>执行<code>cmake ..</code>以及<code>cmake --build .</code>，成功生成helloworld.exe，执行之，提示缺少了<code>pthreadVC2.dll</code>，把这个东西从<code>pthreads-w32-2-9-1-release</code>的dll目录copy到exe的同目录，再次运行：<br><img src="https://raw.githubusercontent.com/winson08Li/picdb/master/img/blog/20191201210802.png" alt="20191201210802.png"></p>
+<p>完成！</p>
+<p>慢着！这样改的话，这个CMakeLists.txt就只能在windows上用了，那这样linux跟windows的脚本文件都一样咋跨平台呢？</p>
+<p>我们需要一种能够兼容两个系统的外部库查找方法，即如果是linux，直接使用系统默认的pthread，如果是windows，就使用我们下载的pthread-w32。</p>
+<p>这里，我们需要写自定义的cmake的模组。</p>
+<h2 id="0x03-编写cmake模组"><a href="#0x03-编写cmake模组" class="headerlink" title="0x03 编写cmake模组"></a>0x03 编写cmake模组</h2><p>cmake本身包含了很多预定义的模组，这些模组有些是方便程序员编写cmake脚本而加的额外命令，有些是一些被使用较多的库，比如线程库，curl, bzip2, git等等。这个列表可以从<a href="https://cmake.org/cmake/help/latest/manual/cmake-modules.7.html" target="_blank" rel="noopener">cmake的帮助文档</a>找到：</p>
+<p><img src="https://raw.githubusercontent.com/winson08Li/picdb/master/img/blog/20191201211527.png" alt="20191201211527.png"></p>
+<p>上面的是工具性模组，下面的是外部库模组。</p>
+<p>不过，很多时候我们的工程都需要编写自定义的模组，比如我们现在遇到的这种情况，我们需要一个模组，这个模组在Linux下会使用系统自带的pthread，而在windows下会使用我们下载的pthread-w32。这样我们就无需改动代码，仅通过改变cmake的编译文件就能兼容两个平台。</p>
+<p>cmake的任何库类型的模组在运行结束之后，会定义以下变量：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;NAME&gt;_FOUND</span><br><span class="line">&lt;NAME&gt;_INCLUDE_DIRS or &lt;NAME&gt;_INCLUDES</span><br><span class="line">&lt;NAME&gt;_LIBRARIES or &lt;NAME&gt;_LIBRARIES or &lt;NAME&gt;_LIBS</span><br><span class="line">&lt;NAME&gt;_DEFINITIONS</span><br></pre></td></tr></table></figure>
+<p>这四个都很好理解，也就是说我们写完的模组只要输出了这四个变量就可以了（实际上是看需要，你用到的就输出，不用到的不用管都行，虽然不规范）。</p>
+<p>经过修改，最终我们的模组长这样：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">set (PTHREAD_INCLUDE_DIR) # 定义变量 PTHREAD_INCLUDE_DIR</span><br><span class="line">set (PTHREAD_LIBRARIES) # 定义变量 PTHREAD_LIBRARIES</span><br><span class="line"></span><br><span class="line"># 针对linux系统，直接使用find_package查找系统线程库</span><br><span class="line">if (CMAKE_SYSTEM_NAME MATCHES &quot;Linux&quot;)</span><br><span class="line">	find_package(Threads)</span><br><span class="line">	if (Threads_FOUND)</span><br><span class="line">		set (PTHREAD_LIBRARIES $&#123;CMAKE_THREAD_LIBS_INIT&#125;)</span><br><span class="line">		find_path     (PTHREAD_INCLUDE_DIR pthread.h)</span><br><span class="line">	endif()</span><br><span class="line">endif()</span><br><span class="line"></span><br><span class="line"># Windows则指定线程库的位置</span><br><span class="line">if (NOT Threads_FOUND)</span><br><span class="line">	find_path     (PTHREAD_INCLUDE_DIR pthread.h PATHS $&#123;CMAKE_SOURCE_DIR&#125;/include)</span><br><span class="line">	find_library  (PTHREAD_LIBRARY     pthread PATHS $&#123;CMAKE_SOURCE_DIR&#125;/lib)</span><br><span class="line">	set (PTHREAD_LIBRARIES $&#123;PTHREAD_LIBRARY&#125;)</span><br><span class="line">endif()</span><br><span class="line"></span><br><span class="line">include (FindPackageHandleStandardArgs)</span><br><span class="line"># 导出 PTHREAD_LIBRARIES 以及 PTHREAD_INCLUDE_DIR 这两个变量。</span><br><span class="line">find_package_handle_standard_args (PTHREAD DEFAULT_MSG PTHREAD_LIBRARIES PTHREAD_INCLUDE_DIR)</span><br><span class="line"></span><br><span class="line">mark_as_advanced(PTHREAD_INCLUDE_DIR PTHREAD_LIBRARIES)</span><br></pre></td></tr></table></figure>
+
+<p>这里有一点新东西。首先是<code>find_path</code>这个命令，这个命令的意思是查找某个文件，如果找到了就把目录保存到第一个参数指定的变量里。而<code>find_library</code>也是一样。</p>
+<p>命令<code>find_package_handle_standard_args</code>需要由<code>FindPackageHandleStandardArgs</code>这个模组来引入。这是一个工具型模组，它会判断你传进去的<code>PTHREAD_LIBRARIES</code>与<code>PTHREAD_INCLUDE_DIR</code>是否有值，如果有，就会定义一个<code>xxx_FOUND</code>的变量，变量的名字<code>xxx</code>就是第一个参数的名字。这个是每个cmake模组都必须要有的。这个命令的详细文档可以参考<a href="https://cmake.org/cmake/help/v3.3/module/FindPackageHandleStandardArgs.html" target="_blank" rel="noopener">官方文档</a>。</p>
+<p>还有我们看到了条件判断<code>if</code>的使用。还记得一开始我们说过么？cmake脚本里面都是命令，没错，这个<code>if</code>也是命令，它不是我们平时理解的编程语言的语法元素，它是命令，括号里面的是<code>if</code>的参数。cmake也有用于循环的命令，感兴趣的可以自行查阅cmake文档。</p>
+<p>模组写好了，怎么用呢？</p>
+<p>因为我们这个是自定义模组，我们需要告诉cmake去哪里找这个自定义模组。</p>
+<p>首先在项目根目录新建一个cmake文件夹，新建一个叫<code>FindPthread.cmake</code>的文件，文件内容为上面我们最终的模组代码，然后修改CMakeLists.txt：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">cmake_minimum_required (VERSION 3.5)</span><br><span class="line">project (helloworld)</span><br><span class="line"></span><br><span class="line">list(APPEND CMAKE_MODULE_PATH &quot;$&#123;CMAKE_CURRENT_SOURCE_DIR&#125;/cmake&quot;)</span><br><span class="line"></span><br><span class="line">if (WIN32)</span><br><span class="line">	add_definitions(-DHAVE_STRUCT_TIMESPEC)</span><br><span class="line">endif()</span><br><span class="line"></span><br><span class="line">find_package(Pthread)</span><br><span class="line">include_directories($&#123;PTHREAD_INCLUDE_DIR&#125;)</span><br><span class="line"></span><br><span class="line">add_executable(helloworld src/main.c)</span><br><span class="line">target_link_libraries (helloworld $&#123;PTHREAD_LIBRARIES&#125;)</span><br></pre></td></tr></table></figure>
+
+<p><code>list</code>是cmake里面操作列表的命令，命令的第一个参数<code>APPEND</code>代表是向列表里面添加元素。在这里很显然就是向<code>CMAKE_MODULE_PATH</code>这个变量所代表的list里面添加了一个值为<code>${CMAKE_CURRENT_SOURCE_DIR}/cmake</code>的元素，也就是我们刚刚新建的cmake目录的路径。这个命令的意思就是告诉cmake去扫描这个目录，找到我们自定义的cmake模组。</p>
+<p>重新执行<code>cmake ..</code>和<code>cmake --build . --config Release</code>：</p>
+<p><img src="https://raw.githubusercontent.com/winson08Li/picdb/master/img/blog/20191201214554.png" alt="20191201214554.png"></p>
+<p>执行：</p>
+<p><img src="https://raw.githubusercontent.com/winson08Li/picdb/master/img/blog/20191201214629.png" alt="20191201214629.png"></p>
+<p>把所有除build目录外的工程文件copy到linux，验证一下在Linux下是否也能用：</p>
+<p><img src="https://raw.githubusercontent.com/winson08Li/picdb/master/img/blog/20191201215024.png" alt="20191201215024.png"></p>
+<p>自然是没问题的。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/12/01/use-cmake-to-build-cross-platform-program/" data-id="ck3xz5prk0002jwwr3g2v1i8x" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2019/12/09/use-gpu-to-calculate-avg-values-of-each-channels/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          使用GPU计算图片中各个通道的平均值
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2019/11/05/the-first-post/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Here we are!</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2019/12/09/use-gpu-to-calculate-avg-values-of-each-channels/">使用GPU计算图片中各个通道的平均值</a>
+          </li>
+        
+          <li>
+            <a href="/2019/12/01/use-cmake-to-build-cross-platform-program/">使用cmake编写跨平台应用</a>
+          </li>
+        
+          <li>
+            <a href="/2019/11/05/the-first-post/">Here we are!</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 Navatics Inc.<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>
